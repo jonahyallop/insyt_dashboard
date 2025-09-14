@@ -1,0 +1,8 @@
+credentials:
+  usernames:
+    dforbes:
+      name: Donnie Forbes
+      password: $2b$12$nnDagrX0l.A31JWAMgE9bOUfb/dV98yyDoJGTWmN1X2tgfy4fOR4O
+    jyallop:
+      name: Jonah Yallop
+      password: $2b$12$dHUgNILyQ98krXn5sK0sJuo/bIAYysfSPHvNDQxXtAvGK5/YEpwT2

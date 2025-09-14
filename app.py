@@ -1,55 +1,51 @@
 import streamlit as st
 import streamlit_authenticator as stauth
+import yaml
+from yaml.loader import SafeLoader
 
-# Define users - to be moved to .yaml or .env
-names = ["Jonah", "Donnie"]
-usernames = ["jonah", "donnie"]
-
-# Hashing passwords for security
-passwords = stauth.Hasher(["jy123", "df123"]).generate()
-
-credentials = {
-    "usernames": {
-        usernames[i]: {
-            "name": names[i],
-            "password": passwords[i]
-        } for i in range(len(usernames))
-    }
-}
+# --- Load configuration from YAML ---
+with open("config/config.yaml") as file:
+    config = yaml.load(file, Loader=SafeLoader)
 
 # --- Authenticator instance ---
 authenticator = stauth.Authenticate(
-    credentials,
+    config['credentials'],
     "my_cookie_name",   # cookie name
     "my_signature_key", # key to encrypt the cookie
     cookie_expiry_days=30
 )
 
-name, authentication_status, username = authenticator.login("Login", "main")
+# --- Display login widget ---
+authenticator.login(location="main")
 
-# --- Login logic ---
-if authentication_status == False:
-    st.error("Username/password is incorrect")
-elif authentication_status == None:
-    st.warning("Please enter your username and password")
-else:
-    authenticator.logout("Logout", "sidebar")
-    st.sidebar.success(f"Welcome {name}!")
+# --- Protect the dashboard content ---
+if "authentication_status" in st.session_state:
+    if st.session_state["authentication_status"]:
+        # User is authenticated
+        st.write(f"Welcome *{st.session_state['name']}*!")
+        
+        # Dashboard content starts here
+        st.title("Football Dashboard")
+
+        # Example: sidebar logout
+        authenticator.logout("Logout", location="sidebar")
     
-    # Now show your normal app
-    st.title("Club Dashboard")
-    st.write("Select an age group to explore:")
+        st.set_page_config(page_title="Club Dashboard", layout="wide")
 
-st.set_page_config(page_title="Club Dashboard", layout="wide")
+        age_groups = ["Under 19s", "Under 17s", "Under 16s", "Under 15s", 
+                    "Under 14s", "Under 13s", "Under 12s"]
 
-st.title("Club Dashboard")
+        for group in age_groups:
+            if st.button(group):
+                st.session_state["selected_group"] = group
+                st.switch_page("pages/1_Player_Dashboard.py")
 
-st.write("Select an age group to explore players:")
-
-age_groups = ["Under 19s", "Under 17s", "Under 16s", "Under 15s", 
-              "Under 14s", "Under 13s", "Under 12s"]
-
-for group in age_groups:
-    if st.button(group):
-        st.session_state["selected_group"] = group
-        st.switch_page("pages/1_Player_Dashboard.py")
+    elif st.session_state["authentication_status"] is False:
+        # Wrong credentials
+        st.error("Username/password is incorrect")
+    elif st.session_state["authentication_status"] is None:
+        # User hasn’t attempted login yet
+        st.warning("Please log in to access the dashboard")
+else:
+    # Authentication status not set yet
+    st.warning("Please log in to access the dashboard")
