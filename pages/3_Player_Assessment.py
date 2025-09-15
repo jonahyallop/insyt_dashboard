@@ -10,9 +10,12 @@ if not player:
     st.warning("Go back and select a player first.")
     st.stop()
 
+# Get user's club from session state
+club = st.session_state.get("club")
+
 # Load player data
-players = pd.read_csv("data/players.csv")
-assessments = pd.read_csv("data/assessments.csv")
+players = pd.read_csv(f"data/players_{club}")
+assessments = pd.read_csv(f"data/assessments_{club}")
 
 # Player row
 pdata = assessments[assessments["name"] == player].iloc[0]

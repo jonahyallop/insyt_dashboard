@@ -20,12 +20,19 @@ authenticator.login(location="main")
 
 # --- Protect the dashboard content ---
 if "authentication_status" in st.session_state:
+
     if st.session_state["authentication_status"]:
+
         # User is authenticated
         st.write(f"Welcome *{st.session_state['name']}*!")
         
+        # Get the club of the user
+        username = st.session_state["username"]
+        club = config['credentials']['usernames'][username]['club']
+        st.session_state["club"] = club
+
         # Dashboard content starts here
-        st.title("Football Dashboard")
+        st.title(f"{club} Dashboard")
 
         # Example: sidebar logout
         authenticator.logout("Logout", location="sidebar")
@@ -43,6 +50,7 @@ if "authentication_status" in st.session_state:
     elif st.session_state["authentication_status"] is False:
         # Wrong credentials
         st.error("Username/password is incorrect")
+
     elif st.session_state["authentication_status"] is None:
         # User hasn’t attempted login yet
         st.warning("Please log in to access the dashboard")

@@ -8,7 +8,12 @@ if not player:
     st.warning("Go back and select a player first.")
     st.stop()
 
-players = pd.read_csv("data/players.csv")
+# Get user's club from session state
+club = st.session_state.get("club")
+
+# Load the player data for the users club
+players = pd.read_csv(f"data/players_{club}")
+
 pinfo = players[players["name"] == player].iloc[0]
 
 st.subheader(player)

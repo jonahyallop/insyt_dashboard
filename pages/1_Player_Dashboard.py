@@ -1,11 +1,21 @@
 import streamlit as st
 import pandas as pd
 import os
+import yaml
+from yaml import SafeLoader
+
+# --- Load configuration from YAML ---
+with open("config/config.yaml") as file:
+    config = yaml.load(file, Loader=SafeLoader)
 
 st.title("👥 Player Dashboard")
 
-players = pd.read_csv("data/players.csv")
-group = st.session_state.get("selected_group", "Under 19s")
+# Get club and group from session state
+club = st.session_state.get("club")
+group = st.session_state.get("selected_group")
+
+# Load the player data for the users club
+players = pd.read_csv(f"data/players_{club}")
 
 st.subheader(f"Players in {group}")
 group_players = players[players["age_group"] == group]
