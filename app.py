@@ -32,8 +32,8 @@ if "authentication_status" in st.session_state:
     
         st.set_page_config(page_title="Club Dashboard", layout="wide")
 
-        age_groups = ["Under 19s", "Under 17s", "Under 16s", "Under 15s", 
-                    "Under 14s", "Under 13s", "Under 12s"]
+        age_groups = ["Under 12s", "Under 13s", "Under 14s", "Under 15s", 
+                    "Under 16s", "Under 17s", "Under 19s"]
 
         for group in age_groups:
             if st.button(group):
