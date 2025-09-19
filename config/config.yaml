@@ -8,3 +8,7 @@ credentials:
       name: Jonah Yallop
       password: $2b$12$dHUgNILyQ98krXn5sK0sJuo/bIAYysfSPHvNDQxXtAvGK5/YEpwT2
       club: testclub2
+    jonah:
+      name: Jonah Yallop
+      password: $2b$12$dHUgNILyQ98krXn5sK0sJuo/bIAYysfSPHvNDQxXtAvGK5/YEpwT2
+      club: testclub2
