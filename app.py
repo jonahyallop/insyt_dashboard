@@ -32,8 +32,7 @@ if "authentication_status" in st.session_state:
         st.session_state["club"] = club
 
         # Dashboard content starts here
-        st.title("Football Dashboard")
-        st.title(f"{club} Dashboard")
+        st.subheader("Please select an age group.")
 
         # Example: sidebar logout
         authenticator.logout("Logout", location="sidebar")
@@ -43,10 +42,12 @@ if "authentication_status" in st.session_state:
         age_groups = ["Under 12s", "Under 13s", "Under 14s", "Under 15s", 
         "Under 16s", "Under 17s", "Under 19s"]
 
-        for group in age_groups:
-            if st.button(group):
-                st.session_state["selected_group"] = group
-                st.switch_page("pages/1_Player_Dashboard.py")
+        # Add dropdown for user to select age group
+        selected_group = st.selectbox("Choose an age group:", age_groups)
+
+        if st.button("Go"):
+            st.session_state["selected_group"] = selected_group
+            st.switch_page("pages/1_Player_Dashboard.py")
 
     elif st.session_state["authentication_status"] is False:
         # Wrong credentials
