@@ -31,19 +31,20 @@ if "authentication_status" in st.session_state:
         club = config['credentials']['usernames'][username]['club']
         st.session_state["club"] = club
 
-        # Dashboard content starts here
-        st.subheader("Please select an age group.")
+        # Add heading
+        st.subheader("Select an age group to see detailed player information.")
 
-        # Example: sidebar logout
+        # Add logout button in sidebar
         authenticator.logout("Logout", location="sidebar")
 
         st.set_page_config(page_title="Club Dashboard", layout="wide")
 
+        # Define age groups - 
         age_groups = ["Under 12s", "Under 13s", "Under 14s", "Under 15s", 
         "Under 16s", "Under 17s", "Under 19s"]
 
         # Add dropdown for user to select age group
-        selected_group = st.selectbox("Choose an age group:", age_groups)
+        selected_group = st.selectbox("Select an age group", age_groups)
 
         if st.button("Go"):
             st.session_state["selected_group"] = selected_group
