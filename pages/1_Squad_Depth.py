@@ -8,11 +8,11 @@ from yaml import SafeLoader
 with open("config/config.yaml") as file:
     config = yaml.load(file, Loader=SafeLoader)
 
-st.title("👥 Player Dashboard")
-
 # Get club and group from session state
 club = st.session_state.get("club")
 group = st.session_state.get("selected_group")
+
+st.title(f"{group} Squad Depth")
 
 # Load the player data for the user's club
 players = pd.read_csv(f"data/players_{club}.csv")
@@ -88,7 +88,7 @@ def position_box(pos_label, players):
             name = p["name"]
             if st.button(name, key=f"{pos_label}_{name}", help=f"Click to view {name}", use_container_width=True):
                 st.session_state["selected_player"] = name
-                st.switch_page(os.path.join("pages/2_Player_Overview.py"))
+                st.switch_page(os.path.join("pages/2_Player_Information.py"))
         else:
             st.markdown("<div class='player-slot'>&nbsp;</div>", unsafe_allow_html=True)
 
