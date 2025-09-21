@@ -12,7 +12,7 @@ if not player:
 club = st.session_state.get("club")
 
 # Load the player data for the users club
-players = pd.read_csv(f"data/players_{club}")
+players = pd.read_csv(f"data/players_{club}.csv")
 
 pinfo = players[players["name"] == player].iloc[0]
 

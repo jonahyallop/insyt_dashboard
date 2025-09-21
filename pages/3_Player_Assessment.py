@@ -14,8 +14,8 @@ if not player:
 club = st.session_state.get("club")
 
 # Load player data
-players = pd.read_csv(f"data/players_{club}")
-assessments = pd.read_csv(f"data/assessments_{club}")
+players = pd.read_csv(f"data/players_{club}.csv")
+assessments = pd.read_csv(f"data/assessments_{club}.csv")
 
 # Player row
 pdata = assessments[assessments["name"] == player].iloc[0]

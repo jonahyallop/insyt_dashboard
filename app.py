@@ -1,59 +1,140 @@
 import streamlit as st
-import streamlit_authenticator as stauth
+import pandas as pd
+import os
 import yaml
-from yaml.loader import SafeLoader
+from yaml import SafeLoader
 
 # --- Load configuration from YAML ---
 with open("config/config.yaml") as file:
     config = yaml.load(file, Loader=SafeLoader)
 
-# --- Authenticator instance ---
-authenticator = stauth.Authenticate(
-    config['credentials'],
-    "my_cookie_name",   # cookie name
-    "my_signature_key", # key to encrypt the cookie
-    cookie_expiry_days=30
+st.title("👥 Player Dashboard")
+
+# Get club and group from session state
+club = st.session_state.get("club")
+group = st.session_state.get("selected_group")
+
+if not club or not group:
+    st.warning("Please select a club and age group from the main dashboard.")
+    st.stop()
+
+# Load the player data for the user's club
+players = pd.read_csv(f"data/players_{club}.csv")
+
+# Filter for this age group
+group_players = players[players["age_group"] == group]
+
+st.subheader("Formation (4-2-3-1)")
+# --- CSS Styling ---
+st.markdown(
+    """
+    <style>
+    .pitch {
+        background: #228B22;
+        border: 3px solid white;
+        border-radius: 8px;
+        padding: 30px;
+        margin: auto;
+        max-width: 800px;   /* limit overall pitch width */
+    }
+    .position-box {
+        border: 2px solid white;
+        border-radius: 6px;
+        padding: 4px;
+        margin: 4px auto;
+        background-color: rgba(255,255,255,0.1);
+        text-align: center;
+        color: white;
+        font-weight: bold;
+        width: 120px;       /* fixed width for ALL position boxes */
+    }
+    .player-slot {
+        margin: 2px 0;      /* smaller gap between players */
+    }
+    .player-btn {
+        background: none;
+        border: none;
+        color: #fff;
+        text-decoration: underline;
+        cursor: pointer;
+        font-size: 0.85rem;
+    }
+    .player-btn:hover {
+        color: #FFD700; /* gold highlight */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
 )
 
-# --- Display login widget ---
-authenticator.login(location="main")
+# --- Utility: render a position box ---
+def position_box(pos_label, players):
+    # Position label box
+    st.markdown(f"<div class='position-box'>{pos_label}</div>", unsafe_allow_html=True)
 
-# --- Protect the dashboard content ---
-if "authentication_status" in st.session_state:
+    # Up to 3 slots
+    for i in range(3):
+        if i < len(players):
+            p = players[i]
+            name = p["name"]
 
-    if st.session_state["authentication_status"]:
+            # Discreet link-style button
+            if st.button(
+                name, 
+                key=f"{pos_label}_{name}", 
+                help=f"Click to view {name}", 
+                use_container_width=True
+            ):
+                st.session_state["selected_player"] = name
+                st.switch_page(os.path.join("pages/2_Player_Overview.py"))
+        else:
+            st.markdown("<div class='player-slot'>&nbsp;</div>", unsafe_allow_html=True)
 
-        # User is authenticated
-        st.write(f"Welcome *{st.session_state['name']}*!")
-        
-        # Get the club of the user
-        username = st.session_state["username"]
-        club = config['credentials']['usernames'][username]['club']
-        st.session_state["club"] = club
+# --- Build position map ---
+position_order = [
+    ["ST"],
+    ["LW", "CAM", "RW"],
+    ["LDM", "RDM"],
+    ["LB", "LCB", "RCB", "RB"],
+    ["GK"]
+]
 
-        # Dashboard content starts here
-        st.title(f"{club} Dashboard")
+positions = {pos: [] for row in position_order for pos in row}
 
-        # Example: sidebar logout
-        authenticator.logout("Logout", location="sidebar")
-    
-        st.set_page_config(page_title="Club Dashboard", layout="wide")
+for pos in positions.keys():
+    matches = group_players[group_players["position"] == pos]
+    if not matches.empty:
+        positions[pos] = matches.to_dict(orient="records")
 
-        age_groups = ["Under 12s", "Under 13s", "Under 14s", "Under 15s", 
-                    "Under 16s", "Under 17s", "Under 19s"]
+# --- Formation Layout (rows) ---
+st.markdown('<div class="pitch">', unsafe_allow_html=True)
 
-        for group in age_groups:
-            if st.button(group):
-                st.session_state["selected_group"] = group
-                st.switch_page("pages/1_Player_Dashboard.py")
+# Striker
+cols = st.columns([3,1,3])
+with cols[1]:
+    position_box("ST", positions["ST"])
 
-    elif st.session_state["authentication_status"] is False:
-        # Wrong credentials
-        st.error("Username/password is incorrect")
+# Attacking Midfield
+cols = st.columns(3)
+with cols[0]: position_box("LW", positions["LW"])
+with cols[1]: position_box("CAM", positions["CAM"])
+with cols[2]: position_box("RW", positions["RW"])
 
-    elif st.session_state["authentication_status"] is None:
-        # User hasn’t attempted login yet
-        st.warning("Please log in to access the dashboard")
-else:
-    # Authentication status not set yet
-    st.warning("Please log in to access the dashboard")
+# Defensive Midfield
+cols = st.columns([2,1,1,2])
+with cols[1]: position_box("LDM", positions["LDM"])
+with cols[2]: position_box("RDM", positions["RDM"])
+
+# Defense
+cols = st.columns(4)
+with cols[0]: position_box("LB", positions["LB"])
+with cols[1]: position_box("LCB", positions["LCB"])
+with cols[2]: position_box("RCB", positions["RCB"])
+with cols[3]: position_box("RB", positions["RB"])
+
+# Goalkeeper
+cols = st.columns([3,1,3])
+with cols[1]:
+    position_box("GK", positions["GK"])
+
+st.markdown('</div>', unsafe_allow_html=True)
