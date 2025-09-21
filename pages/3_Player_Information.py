@@ -24,9 +24,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- Title ---
-st.title("🏟️ Player Information")
-
 # --- Get selected player ---
 player = st.session_state.get("selected_player", None)
 if not player:
@@ -45,15 +42,8 @@ pinfo = players[players["name"] == player].iloc[0]
 pdata = assessments[assessments["name"] == player].iloc[0]
 group = pinfo["age_group"]
 
-# --- Header Card ---
-st.markdown(f"""
-<div class="card">
-    <h2>{player}</h2>
-    <p><b>Age:</b> {pinfo['age']} &nbsp; | &nbsp;
-       <b>Position:</b> {pinfo['position']} &nbsp; | &nbsp;
-       <b>Group:</b> {group}</p>
-</div>
-""", unsafe_allow_html=True)
+# --- Page title: Player name ---
+st.title(player)
 
 # --- Player Info Row (3 columns) ---
 col1, col2, col3 = st.columns(3)
@@ -61,7 +51,11 @@ col1, col2, col3 = st.columns(3)
 with col1:
     st.markdown(f"""
     <div class="card">
-        <h4>📌 Basic Info</h4>
+        <h4>📌 Player Info</h4>
+        <p><b>Age:</b> {pinfo['age']}</p>
+        <p><b>Position:</b> {pinfo['position']}</p>
+        <p><b>Group:</b> {group}</p>
+        <hr>
         <p><b>DOB:</b> {pinfo['dob']}</p>
         <p><b>Height:</b> {pinfo['height']} cm</p>
         <p><b>Weight:</b> {pinfo['weight']} kg</p>
