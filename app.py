@@ -48,7 +48,7 @@ if "authentication_status" in st.session_state:
 
         if st.button("Go"):
             st.session_state["selected_group"] = selected_group
-            st.switch_page("pages/2_Squad_Depth.py")
+            st.switch_page("pages/1_Squad_Depth.py")
 
     elif st.session_state["authentication_status"] is False:
         # Wrong credentials
