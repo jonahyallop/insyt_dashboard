@@ -14,10 +14,6 @@ st.title("👥 Player Dashboard")
 club = st.session_state.get("club")
 group = st.session_state.get("selected_group")
 
-if not club or not group:
-    st.warning("Please select a club and age group from the main dashboard.")
-    st.stop()
-
 # Load the player data for the user's club
 players = pd.read_csv(f"data/players_{club}.csv")
 
@@ -25,6 +21,7 @@ players = pd.read_csv(f"data/players_{club}.csv")
 group_players = players[players["age_group"] == group]
 
 st.subheader("Formation (4-2-3-1)")
+
 # --- CSS Styling ---
 st.markdown(
     """
@@ -35,21 +32,19 @@ st.markdown(
         border-radius: 8px;
         padding: 30px;
         margin: auto;
-        max-width: 800px;   /* limit overall pitch width */
     }
     .position-box {
         border: 2px solid white;
         border-radius: 6px;
-        padding: 4px;
-        margin: 4px auto;
+        padding: 6px;
+        margin: 4px;
         background-color: rgba(255,255,255,0.1);
         text-align: center;
         color: white;
         font-weight: bold;
-        width: 120px;       /* fixed width for ALL position boxes */
     }
     .player-slot {
-        margin: 2px 0;      /* smaller gap between players */
+        margin: 4px 0;
     }
     .player-btn {
         background: none;
@@ -57,7 +52,7 @@ st.markdown(
         color: #fff;
         text-decoration: underline;
         cursor: pointer;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
     }
     .player-btn:hover {
         color: #FFD700; /* gold highlight */
@@ -66,29 +61,6 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-
-# --- Utility: render a position box ---
-def position_box(pos_label, players):
-    # Position label box
-    st.markdown(f"<div class='position-box'>{pos_label}</div>", unsafe_allow_html=True)
-
-    # Up to 3 slots
-    for i in range(3):
-        if i < len(players):
-            p = players[i]
-            name = p["name"]
-
-            # Discreet link-style button
-            if st.button(
-                name, 
-                key=f"{pos_label}_{name}", 
-                help=f"Click to view {name}", 
-                use_container_width=True
-            ):
-                st.session_state["selected_player"] = name
-                st.switch_page(os.path.join("pages/2_Player_Overview.py"))
-        else:
-            st.markdown("<div class='player-slot'>&nbsp;</div>", unsafe_allow_html=True)
 
 # --- Build position map ---
 position_order = [
@@ -105,6 +77,20 @@ for pos in positions.keys():
     matches = group_players[group_players["position"] == pos]
     if not matches.empty:
         positions[pos] = matches.to_dict(orient="records")
+
+# --- Utility: render a position box ---
+def position_box(pos_label, players):
+    st.markdown(f"<div class='position-box'>{pos_label}</div>", unsafe_allow_html=True)
+    # Up to 3 slots
+    for i in range(3):
+        if i < len(players):
+            p = players[i]
+            name = p["name"]
+            if st.button(name, key=f"{pos_label}_{name}", help=f"Click to view {name}", use_container_width=True):
+                st.session_state["selected_player"] = name
+                st.switch_page(os.path.join("pages/2_Player_Overview.py"))
+        else:
+            st.markdown("<div class='player-slot'>&nbsp;</div>", unsafe_allow_html=True)
 
 # --- Formation Layout (rows) ---
 st.markdown('<div class="pitch">', unsafe_allow_html=True)
