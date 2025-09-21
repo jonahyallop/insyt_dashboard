@@ -20,109 +20,107 @@ players = pd.read_csv(f"data/players_{club}.csv")
 # Filter for this age group
 group_players = players[players["age_group"] == group]
 
-st.subheader(f"Formation (4-2-3-1) — {group}")
+st.subheader("Formation (4-2-3-1)")
 
-# --- Map positions to players (lists, not single rows) ---
-positions = {pos: [] for pos in [
-    "GK", "LB", "LCB", "RCB", "RB", "LDM", "RDM", "CAM", "LW", "RW", "ST"
-]}
-
-for pos in positions.keys():
-    matches = group_players[group_players["position"] == pos]
-    if not matches.empty:
-        positions[pos] = matches.to_dict("records")  # keep as list of dicts
-
-# --- Styles: pitch + player buttons ---
-PITCH_HEIGHT = 520
-
+# --- CSS Styling ---
 st.markdown(
-    f"""
+    """
     <style>
-    .formation-pitch {{
+    .pitch {
         background: #228B22;
         border: 3px solid white;
-        border-radius: 10px;
-        height: {PITCH_HEIGHT}px;
-        margin: 12px 0 -{PITCH_HEIGHT - 40}px;
-        position: relative;
-        z-index: 0;
-        pointer-events: none;
-    }}
-
-    div.stButton > button {{
-        width: 140px !important;   /* fixed button width */
-        height: 40px !important;   /* fixed button height */
-        overflow: hidden !important;
-        white-space: nowrap !important;
-        text-overflow: ellipsis !important;  /* truncate with … if too long */
-        border-radius: 8px !important;
-        font-weight: 600 !important;
-        font-size: 14px !important;
-    }}
-
-    .player-stat {{
-        font-size: 13px;
-        color: rgba(255,255,255,0.9);
-        margin-top: 6px;
-    }}
+        border-radius: 8px;
+        padding: 30px;
+        margin: auto;
+    }
+    .position-box {
+        border: 2px solid white;
+        border-radius: 6px;
+        padding: 6px;
+        margin: 4px;
+        background-color: rgba(255,255,255,0.1);
+        text-align: center;
+        color: white;
+        font-weight: bold;
+    }
+    .player-slot {
+        margin: 4px 0;
+    }
+    .player-btn {
+        background: none;
+        border: none;
+        color: #fff;
+        text-decoration: underline;
+        cursor: pointer;
+        font-size: 0.9rem;
+    }
+    .player-btn:hover {
+        color: #FFD700; /* gold highlight */
+    }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
-# Green background block
-st.markdown('<div class="formation-pitch"></div>', unsafe_allow_html=True)
+# --- Build position map ---
+position_order = [
+    ["ST"],
+    ["LW", "CAM", "RW"],
+    ["LDM", "RDM"],
+    ["LB", "LCB", "RCB", "RB"],
+    ["GK"]
+]
 
-# --- Utility: display a player card ---
-def player_card(player_list, pos_label=None):
-    if not player_list:
-        st.empty()
-        return
+positions = {pos: [] for row in position_order for pos in row}
 
-    # Show the position label once, centered above the stack
-    if pos_label:
-        st.markdown(
-            f"<div style='text-align:center; font-weight:bold; color:white;'>{pos_label}</div>",
-            unsafe_allow_html=True
-        )
+for pos in positions.keys():
+    matches = group_players[group_players["position"] == pos]
+    if not matches.empty:
+        positions[pos] = matches.to_dict(orient="records")
 
-    # Show each player as a button + stat
-    for player_row in player_list:
-        name = player_row["name"]
+# --- Utility: render a position box ---
+def position_box(pos_label, players):
+    st.markdown(f"<div class='position-box'>{pos_label}</div>", unsafe_allow_html=True)
+    # Up to 3 slots
+    for i in range(3):
+        if i < len(players):
+            p = players[i]
+            name = p["name"]
+            if st.button(name, key=f"{pos_label}_{name}", help=f"Click to view {name}", use_container_width=False):
+                st.session_state["selected_player"] = name
+                st.switch_page(os.path.join("pages/2_Player_Overview.py"))
+        else:
+            st.markdown("<div class='player-slot'>&nbsp;</div>", unsafe_allow_html=True)
 
-        if st.button(name, key=f"{pos_label}_{name}"):
-            st.session_state["selected_player"] = name
-            st.switch_page(os.path.join("pages/2_Player_Overview.py"))
-
-
-# --- Layout (9-column grid so ST, CAM, GK align) ---
-# indices: 0..8, center = 4
-# LB/LW = col 1, LCB/LDM = col 3, CAM/ST/GK = col 4, RDM/RCB = col 5, RW/RB = col 7
+# --- Formation Layout (rows) ---
+st.markdown('<div class="pitch">', unsafe_allow_html=True)
 
 # Striker
 cols = st.columns([3,1,3])
 with cols[1]:
-    player_card(positions["ST"], "ST")
+    position_box("ST", positions["ST"])
 
 # Attacking Midfield
 cols = st.columns(3)
-with cols[0]: player_card(positions["LW"], "LW")
-with cols[1]: player_card(positions["CAM"], "CAM")
-with cols[2]: player_card(positions["RW"], "RW")
+with cols[0]: position_box("LW", positions["LW"])
+with cols[1]: position_box("CAM", positions["CAM"])
+with cols[2]: position_box("RW", positions["RW"])
 
 # Defensive Midfield
 cols = st.columns([2,1,1,2])
-with cols[1]: player_card(positions["LDM"], "LDM")
-with cols[2]: player_card(positions["RDM"], "RDM")
+with cols[1]: position_box("LDM", positions["LDM"])
+with cols[2]: position_box("RDM", positions["RDM"])
 
 # Defense
 cols = st.columns(4)
-with cols[0]: player_card(positions["LB"], "LB")
-with cols[1]: player_card(positions["LCB"], "LCB")
-with cols[2]: player_card(positions["RCB"], "RCB")
-with cols[3]: player_card(positions["RB"], "RB")
+with cols[0]: position_box("LB", positions["LB"])
+with cols[1]: position_box("LCB", positions["LCB"])
+with cols[2]: position_box("RCB", positions["RCB"])
+with cols[3]: position_box("RB", positions["RB"])
 
 # Goalkeeper
 cols = st.columns([3,1,3])
 with cols[1]:
-    player_card(positions["GK"], "GK")
+    position_box("GK", positions["GK"])
+
+st.markdown('</div>', unsafe_allow_html=True)
