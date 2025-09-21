@@ -4,8 +4,24 @@ import plotly.express as px
 
 st.set_page_config(page_title="Player Information", layout="wide")
 
+# --- CSS for "cards" ---
+st.markdown("""
+    <style>
+    .card {
+        background-color: #f9f9f9;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 1rem;
+    }
+    .card h4 {
+        margin-top: 0;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 # --- Title ---
-st.title("Player Information")
+st.title("🏟️ Player Information")
 
 # --- Get selected player ---
 player = st.session_state.get("selected_player", None)
@@ -25,34 +41,46 @@ pinfo = players[players["name"] == player].iloc[0]
 pdata = assessments[assessments["name"] == player].iloc[0]
 group = pinfo["age_group"]
 
-# --- Header / Player summary ---
-st.markdown(f"## {player}")
-st.markdown(f"**Age:** {pinfo['age']} | **Position:** {pinfo['position']} | **Group:** {group}")
+# --- Header card ---
+st.markdown(f"""
+<div class="card">
+    <h2>{player}</h2>
+    <p><b>Age:</b> {pinfo['age']} &nbsp; | &nbsp; <b>Position:</b> {pinfo['position']} &nbsp; | &nbsp; <b>Group:</b> {group}</p>
+</div>
+""", unsafe_allow_html=True)
 
-# --- Player details in 2 columns ---
-col1, col2 = st.columns(2)
+# --- Top row: basic info + background ---
+col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.subheader("📌 Basic Information")
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown("#### 📌 Basic Info")
     st.write(f"**DOB:** {pinfo['dob']}")
     st.write(f"**Height:** {pinfo['height']} cm")
     st.write(f"**Weight:** {pinfo['weight']} kg")
-
-    st.subheader("👨‍👩‍👦 Family")
-    st.write("Family info goes here…")
-
-    st.subheader("🏫 School")
-    st.write("School info goes here…")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 with col2:
-    st.subheader("⚽ Sports Background")
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown("#### 👨‍👩‍👦 Family")
+    st.write("Family info goes here…")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown("#### 🏫 School")
+    st.write("School info goes here…")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with col3:
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown("#### ⚽ Sports")
     st.write("Sports info goes here…")
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    st.subheader("🩺 Medical")
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown("#### 🩺 Medical")
     st.write("Medical info goes here…")
-
-    st.subheader("📜 Declarations")
-    st.write("Declarations info goes here…")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # --- Subjective Ratings Radar Chart ---
 ratings = ["Receiving","Carrying","Distributing","Intelligence","Attitude","Learning"]
@@ -85,14 +113,18 @@ fig = px.line_polar(
 )
 fig.update_traces(fill="toself")
 
-st.subheader(f"📈 Subjective Ratings: {player} vs {group} Average")
+st.markdown('<div class="card">', unsafe_allow_html=True)
+st.markdown(f"#### 📈 Subjective Ratings: {player} vs {group} Avg")
 st.plotly_chart(fig, use_container_width=True)
+st.markdown('</div>', unsafe_allow_html=True)
 
-# --- Objective Tests as metrics ---
-st.subheader("⚡ Objective Tests")
+# --- Objective Tests ---
+st.markdown('<div class="card">', unsafe_allow_html=True)
+st.markdown("#### ⚡ Objective Tests")
 
 mcol1, mcol2, mcol3, mcol4 = st.columns(4)
 mcol1.metric("Speed 5m", f"{pdata['speed5m']}s")
 mcol2.metric("Speed 10m", f"{pdata['speed10m']}s")
 mcol3.metric("Speed 15m", f"{pdata['speed15m']}s")
 mcol4.metric("Explosivity", f"{pdata['explosivity']}")
+st.markdown('</div>', unsafe_allow_html=True)
