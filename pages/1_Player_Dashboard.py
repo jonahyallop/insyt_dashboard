@@ -86,7 +86,7 @@ def position_box(pos_label, players):
         if i < len(players):
             p = players[i]
             name = p["name"]
-            if st.button(name, key=f"{pos_label}_{name}", help=f"Click to view {name}", use_container_width=False):
+            if st.button(name, key=f"{pos_label}_{name}", help=f"Click to view {name}", use_container_width=True):
                 st.session_state["selected_player"] = name
                 st.switch_page(os.path.join("pages/2_Player_Overview.py"))
         else:
