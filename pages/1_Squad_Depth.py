@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import os
+import base64
 import yaml
 from yaml import SafeLoader
 
@@ -49,25 +49,31 @@ for pos in positions.keys():
     if not matches.empty:
         positions[pos] = matches.to_dict(orient="records")
 
-# --- Render formation with HTML buttons ---
-html = """
+# --- Encode local image to Base64 ---
+image_path = "images/Football Pitch Image.svg"  # relative path in your project
+with open(image_path, "rb") as f:
+    image_bytes = f.read()
+    b64_image = base64.b64encode(image_bytes).decode()
+
+# --- Render formation with HTML buttons using Base64 image ---
+html = f"""
 <style>
-.pitch-container {
+.pitch-container {{
     position: relative;
     width: 100%;
     height: 600px;
-    background-image: url('/Users/jonahyallop/Documents/04. Code Repositories/insyt_dashboard/images/Football Pitch Image.svg');
+    background-image: url("data:image/svg+xml;base64,{b64_image}");
     background-size: contain;
     background-repeat: no-repeat;
-    background-position: center center;
+    background-position: center bottom; /* goal at bottom */
     margin: auto;
-}
-.position-box {
+}}
+.position-box {{
     position: absolute;
     transform: translate(-50%, -50%);
     text-align: center;
-}
-.player-btn {
+}}
+.player-btn {{
     background-color: rgba(0,0,0,0.5);
     color: white;
     border: 1px solid white;
@@ -76,11 +82,11 @@ html = """
     padding: 2px 5px;
     font-size: 0.9rem;
     margin: 1px 0;
-}
-.player-btn:hover {
+}}
+.player-btn:hover {{
     background-color: gold;
     color: black;
-}
+}}
 </style>
 <div class="pitch-container">
 """
