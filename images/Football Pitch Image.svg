@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    width="740"
-   height="1110"
-   viewBox="0 0 74 111"
+   height="571.00964"
+   viewBox="0 0 74 57.100964"
    version="1.1"
    id="svg1"
    sodipodi:docname="Football Pitch Image.svg"
@@ -48,7 +48,7 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="0.37477477"
      inkscape:cx="353.54567"
-     inkscape:cy="497.63221"
+     inkscape:cy="-41.358173"
      inkscape:window-width="1384"
      inkscape:window-height="802"
      inkscape:window-x="224"
@@ -60,23 +60,26 @@
      width="74"
      height="111"
      fill="#00a000"
-     clip-path="url(#clipPath2)" />
+     clip-path="url(#clipPath2)"
+     x="0"
+     y="0"
+     transform="translate(0,-53.899036)" />
   <g
      fill="none"
-     stroke="#fff"
+     stroke="#ffffff"
      stroke-width="0.5"
-     transform="translate(3 3)"
+     transform="translate(3,-50.899036)"
      id="g1"
      clip-path="url(#clipPath1)">
     <path
        id="Border"
-       d="M 0 0 h 68 v 105 h -68 Z" />
+       d="M 0,0 H 68 V 105 H 0 Z" />
     <path
        id="Centre line"
-       d="M 0 52.5 h 68" />
+       d="M 0,52.5 H 68" />
     <circle
        id="Centre circle"
-       r="9.15"
+       r="9.1499996"
        cx="34"
        cy="52.5" />
     <circle
@@ -84,33 +87,33 @@
        r="0.75"
        cx="34"
        cy="52.5"
-       fill="#fff"
+       fill="#ffffff"
        stroke="none" />
     <g
        id="Penalty area">
       <path
          id="Penalty area line"
-         d="M 13.84 0 v 16.5 h 40.32 v -16.5" />
+         d="M 13.84,0 V 16.5 H 54.16 V 0" />
       <path
          id="Goal area line"
-         d="M 24.84 0 v 5.5 h 18.32 v -5.5" />
+         d="M 24.84,0 V 5.5 H 43.16 V 0" />
       <circle
          id="Penalty mark"
          r="0.75"
          cx="34"
          cy="10.94"
-         fill="#fff"
+         fill="#ffffff"
          stroke="none" />
       <path
          id="Penalty arc"
-         d="M 26.733027 16.5 a 9.15 9.15 0 0 0 14.533946 0" />
+         d="m 26.733027,16.5 a 9.15,9.15 0 0 0 14.533946,0" />
     </g>
     <use
-       xlink:href="#Penalty area"
+       xlink:href="#Penalty%20area"
        transform="rotate(180,34,52.5)"
        id="use1" />
     <path
        id="Corner arcs"
-       d="M 0 2 a 2 2 0 0 0 2 -2M 66 0 a 2 2 0 0 0 2 2M 68 103 a 2 2 0 0 0 -2 2M 2 105 a 2 2 0 0 0 -2 -2" />
+       d="M 0,2 A 2,2 0 0 0 2,0 m 64,0 a 2,2 0 0 0 2,2 m 0,101 a 2,2 0 0 0 -2,2 m -64,0 a 2,2 0 0 0 -2,-2" />
   </g>
 </svg>
