@@ -21,19 +21,14 @@ st.subheader("Formation (4-2-3-1)")
 # --- Map positions to coordinates (percentages) for taller half-pitch ---
 position_coords = {
     "GK": {"top": 95, "left": 50},
-    "LB": {"top": 75, "left": 12},
-    "GK": {"top": 85, "left": 50},
     "LB": {"top": 75, "left": 20},
     "LCB": {"top": 75, "left": 35},
     "RCB": {"top": 75, "left": 65},
-    "RB": {"top": 75, "left": 88},
     "RB": {"top": 75, "left": 80},
     "LDM": {"top": 55, "left": 42},
     "RDM": {"top": 55, "left": 58},
-    "LW": {"top": 35, "left": 18},
     "LW": {"top": 35, "left": 25},
     "CAM": {"top": 35, "left": 50},
-    "RW": {"top": 35, "left": 82},
     "RW": {"top": 35, "left": 75},
     "ST": {"top": 15, "left": 50},
 }
@@ -60,13 +55,13 @@ with open(image_path, "rb") as f:
     image_bytes = f.read()
     b64_image = base64.b64encode(image_bytes).decode()
 
-# --- Render formation with HTML buttons using Base64 image ---
+# --- CSS + container ---
 html = f"""
 <style>
 .pitch-container {{
    position: relative;
    width: 100%;
-   height: 900px;  /* taller container */
+   height: 900px;  /* adjust to your image */
    background-image: url("data:image/svg+xml;base64,{b64_image}");
    background-size: contain;
    background-repeat: no-repeat;
@@ -96,27 +91,28 @@ html = f"""
 <div class="pitch-container">
 """
 
-# Open pitch container
-st.markdown('<div class="pitch-container">', unsafe_allow_html=True)
-
-# Add each position
+# --- Add each position with clickable links ---
 for pos, players_list in positions.items():
     coords = position_coords.get(pos)
     top = coords["top"]
     left = coords["left"]
-
-    # open div at correct position
-    st.markdown(f'<div class="position-box" style="top:{top}%; left:{left}%;">', unsafe_allow_html=True)
-    st.markdown(f"<div><strong>{pos}</strong></div>", unsafe_allow_html=True)
-
-    # Add real Streamlit buttons instead of HTML <button>
+    html += f'<div class="position-box" style="top:{top}%; left:{left}%;">'
+    html += f'<div><strong>{pos}</strong></div>'
     for i, p in enumerate(players_list[:3]):
         name = p["name"]
-        if st.button(name, key=f"{pos}_{name}"):
-            st.session_state["selected_player"] = name
-            st.switch_page("pages/2_Player_Information.py")
+        html += f'''
+            <a href="?selected_player={name}" target="_self">
+                <button class="player-btn">{name}</button>
+            </a><br>
+        '''
+    html += '</div>'
 
-    st.markdown("</div>", unsafe_allow_html=True)
+html += "</div>"
 
-# Close pitch container
-st.markdown("</div>", unsafe_allow_html=True)
+st.markdown(html, unsafe_allow_html=True)
+
+# --- Handle navigation ---
+if "selected_player" in st.query_params:
+    selected_player = st.query_params["selected_player"]
+    st.session_state["selected_player"] = selected_player
+    st.switch_page("pages/2_Player_Information.py")
