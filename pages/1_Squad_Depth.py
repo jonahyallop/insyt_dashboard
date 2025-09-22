@@ -18,34 +18,7 @@ group_players = players[players["age_group"] == group]
 
 st.subheader("Formation (4-2-3-1)")
 
-# --- CSS for pitch and overlay ---
-st.markdown(
-    """
-    <style>
-    .pitch-container {
-        position: relative;
-        width: 100%;
-        height: 600px;
-        background-image: url("https://upload.wikimedia.org/wikipedia/commons/4/45/Football_field.svg");
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center center;
-        margin: auto;
-    }
-    .position-box {
-        position: absolute;
-        transform: translate(-50%, -50%);
-        text-align: center;
-    }
-    .player-btn {
-        margin: 2px 0;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-# --- Map positions to coordinates (percent) ---
+# --- Map positions to coordinates (percentages) ---
 position_coords = {
     "GK": {"top": 92, "left": 50},
     "LB": {"top": 70, "left": 12},
@@ -76,26 +49,54 @@ for pos in positions.keys():
     if not matches.empty:
         positions[pos] = matches.to_dict(orient="records")
 
-# --- Utility to render position box with Streamlit buttons ---
-def render_position(pos_label, players_list):
-    coords = position_coords.get(pos_label, {"top": 0, "left": 0})
+# --- Render formation with HTML buttons ---
+html = """
+<style>
+.pitch-container {
+    position: relative;
+    width: 100%;
+    height: 600px;
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/4/45/Football_field.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    margin: auto;
+}
+.position-box {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+.player-btn {
+    background-color: rgba(0,0,0,0.5);
+    color: white;
+    border: 1px solid white;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 2px 5px;
+    font-size: 0.9rem;
+    margin: 1px 0;
+}
+.player-btn:hover {
+    background-color: gold;
+    color: black;
+}
+</style>
+<div class="pitch-container">
+"""
+
+# Add each position
+for pos, players_list in positions.items():
+    coords = position_coords.get(pos)
     top = coords["top"]
     left = coords["left"]
-
-    st.markdown(f'<div class="position-box" style="top:{top}%; left:{left}%;">', unsafe_allow_html=True)
-
-    st.markdown(f"<strong>{pos_label}</strong><br>", unsafe_allow_html=True)
+    html += f'<div class="position-box" style="top:{top}%; left:{left}%;">'
+    html += f'<div><strong>{pos}</strong></div>'
     for i, p in enumerate(players_list[:3]):
         name = p["name"]
-        if st.button(name, key=f"{pos_label}_{name}", use_container_width=True):
-            st.session_state["selected_player"] = name
-            st.switch_page(os.path.join("pages/2_Player_Information.py"))
-    st.markdown("</div>", unsafe_allow_html=True)
+        html += f'<button class="player-btn" onclick="window.alert(\'Selected: {name}\')">{name}</button><br>'
+    html += '</div>'
 
-# --- Render pitch ---
-st.markdown('<div class="pitch-container">', unsafe_allow_html=True)
+html += "</div>"
 
-for pos, players_list in positions.items():
-    render_position(pos, players_list)
-
-st.markdown('</div>', unsafe_allow_html=True)
+st.markdown(html, unsafe_allow_html=True)
