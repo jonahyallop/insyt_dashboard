@@ -96,18 +96,27 @@ html = f"""
 <div class="pitch-container">
 """
 
+# Open pitch container
+st.markdown('<div class="pitch-container">', unsafe_allow_html=True)
+
 # Add each position
 for pos, players_list in positions.items():
     coords = position_coords.get(pos)
     top = coords["top"]
     left = coords["left"]
-    html += f'<div class="position-box" style="top:{top}%; left:{left}%;">'
-    html += f'<div><strong>{pos}</strong></div>'
+
+    # open div at correct position
+    st.markdown(f'<div class="position-box" style="top:{top}%; left:{left}%;">', unsafe_allow_html=True)
+    st.markdown(f"<div><strong>{pos}</strong></div>", unsafe_allow_html=True)
+
+    # Add real Streamlit buttons instead of HTML <button>
     for i, p in enumerate(players_list[:3]):
         name = p["name"]
-        html += f'<button class="player-btn" onclick="window.alert(\'Selected: {name}\')">{name}</button><br>'
-    html += '</div>'
+        if st.button(name, key=f"{pos}_{name}"):
+            st.session_state["selected_player"] = name
+            st.switch_page("pages/2_Player_Information.py")
 
-html += "</div>"
+    st.markdown("</div>", unsafe_allow_html=True)
 
-st.markdown(html, unsafe_allow_html=True)
+# Close pitch container
+st.markdown("</div>", unsafe_allow_html=True)
