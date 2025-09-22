@@ -20,16 +20,16 @@ st.subheader("Formation (4-2-3-1)")
 
 # --- Map positions to coordinates (percentages) for taller half-pitch ---
 position_coords = {
-    "GK": {"top": 95, "left": 50},
-    "LB": {"top": 75, "left": 12},
+    "GK": {"top": 85, "left": 50},
+    "LB": {"top": 75, "left": 20},
     "LCB": {"top": 75, "left": 35},
     "RCB": {"top": 75, "left": 65},
-    "RB": {"top": 75, "left": 88},
+    "RB": {"top": 75, "left": 80},
     "LDM": {"top": 55, "left": 42},
     "RDM": {"top": 55, "left": 58},
-    "LW": {"top": 35, "left": 18},
+    "LW": {"top": 35, "left": 25},
     "CAM": {"top": 35, "left": 50},
-    "RW": {"top": 35, "left": 82},
+    "RW": {"top": 35, "left": 75},
     "ST": {"top": 15, "left": 50},
 }
 
