@@ -56,7 +56,7 @@ html = """
     position: relative;
     width: 100%;
     height: 600px;
-    background-image: url('https://upload.wikimedia.org/wikipedia/commons/4/45/Football_field.svg');
+    background-image: url('images/Football Pitch Image.svg');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center center;
