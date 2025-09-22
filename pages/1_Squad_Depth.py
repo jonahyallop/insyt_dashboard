@@ -102,7 +102,7 @@ def position_box(pos_label, players):
             st.markdown("<div class='player-slot'>&nbsp;</div>", unsafe_allow_html=True)
 
 # --- Formation Layout inside a visible frame ---
-st.markdown('<div class="pitch-frame">', unsafe_allow_html=True)
+st.markdown('<div class="pitch">', unsafe_allow_html=True)
 
 # Striker (centered)
 cols = st.columns([3,1,3])
