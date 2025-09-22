@@ -18,7 +18,7 @@ group_players = players[players["age_group"] == group]
 
 st.subheader("Formation (4-2-3-1)")
 
-# --- Map positions to coordinates (percentages) for taller half-pitch ---
+# --- Map positions to coordinates (percentages) ---
 position_coords = {
     "GK": {"top": 95, "left": 50},
     "LB": {"top": 75, "left": 20},
@@ -56,16 +56,16 @@ with open(image_path, "rb") as f:
     b64_image = base64.b64encode(image_bytes).decode()
 
 # --- CSS + container ---
-html = f"""
+st.markdown(f"""
 <style>
 .pitch-container {{
    position: relative;
    width: 100%;
-   height: 900px;  /* adjust to your image */
+   height: 900px;
    background-image: url("data:image/svg+xml;base64,{b64_image}");
    background-size: contain;
    background-repeat: no-repeat;
-   background-position: center bottom; /* goal at bottom */
+   background-position: center bottom;
    margin: auto;
 }}
 .position-box {{
@@ -89,27 +89,28 @@ html = f"""
 }}
 </style>
 <div class="pitch-container">
-"""
+""", unsafe_allow_html=True)
 
 # --- Add each position with clickable links ---
 for pos, players_list in positions.items():
     coords = position_coords.get(pos)
-    top = coords["top"]
-    left = coords["left"]
-    html += f'<div class="position-box" style="top:{top}%; left:{left}%;">'
-    html += f'<div><strong>{pos}</strong></div>'
-    for i, p in enumerate(players_list[:3]):
-        name = p["name"]
-        html += f'''
-            <a href="?selected_player={name}" target="_self">
-                <button class="player-btn">{name}</button>
-            </a><br>
-        '''
-    html += '</div>'
+    if coords:
+        top = coords["top"]
+        left = coords["left"]
+        block = f'<div class="position-box" style="top:{top}%; left:{left}%;">'
+        block += f'<div><strong>{pos}</strong></div>'
+        for p in players_list[:3]:
+            name = p["name"]
+            block += f'''
+                <a href="?selected_player={name}" target="_self">
+                    <button class="player-btn">{name}</button>
+                </a><br>
+            '''
+        block += '</div>'
+        st.markdown(block, unsafe_allow_html=True)
 
-html += "</div>"
-
-st.markdown(html, unsafe_allow_html=True)
+# close container
+st.markdown("</div>", unsafe_allow_html=True)
 
 # --- Handle navigation ---
 if "selected_player" in st.query_params:
