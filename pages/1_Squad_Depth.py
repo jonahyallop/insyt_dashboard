@@ -60,8 +60,8 @@ html = f"""
 <style>
 .pitch-container {{
     position: relative;
-    width: 100%;
-    height: 900px;
+    width: 90%;
+    height: 700px;
     background-image: url("data:image/svg+xml;base64,{b64_image}");
     background-size: contain;
     background-repeat: no-repeat;
