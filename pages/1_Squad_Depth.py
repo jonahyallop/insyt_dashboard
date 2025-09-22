@@ -1,8 +1,13 @@
+# formation_page.py  (replace your existing file content with this)
 import streamlit as st
 import pandas as pd
 import base64
 import yaml
 from yaml import SafeLoader
+import urllib.parse
+import html as html_lib
+import streamlit.components.v1 as components
+import os
 
 # --- Load configuration ---
 with open("config/config.yaml") as file:
@@ -18,102 +23,145 @@ group_players = players[players["age_group"] == group]
 
 st.subheader("Formation (4-2-3-1)")
 
-# --- Map positions to coordinates (percentages) ---
+# --- Clean map positions to coordinates (unique & sensible values) ---
 position_coords = {
-    "GK": {"top": 95, "left": 50},
-    "LB": {"top": 75, "left": 20},
+    "GK":  {"top": 95, "left": 50},
+    "LB":  {"top": 75, "left": 20},
     "LCB": {"top": 75, "left": 35},
     "RCB": {"top": 75, "left": 65},
-    "RB": {"top": 75, "left": 80},
+    "RB":  {"top": 75, "left": 80},
     "LDM": {"top": 55, "left": 42},
     "RDM": {"top": 55, "left": 58},
-    "LW": {"top": 35, "left": 25},
+    "LW":  {"top": 35, "left": 25},
     "CAM": {"top": 35, "left": 50},
-    "RW": {"top": 35, "left": 75},
-    "ST": {"top": 15, "left": 50},
+    "RW":  {"top": 35, "left": 75},
+    "ST":  {"top": 15, "left": 50},
 }
 
-# --- Build positions dict ---
+# --- Build positions dict in the order we want to show them ---
 position_order = [
     ["ST"],
     ["LW", "CAM", "RW"],
     ["LDM", "RDM"],
     ["LB", "LCB", "RCB", "RB"],
     ["GK"]
-]   
-
+]
 positions = {pos: [] for row in position_order for pos in row}
-
 for pos in positions.keys():
     matches = group_players[group_players["position"] == pos]
     if not matches.empty:
         positions[pos] = matches.to_dict(orient="records")
 
-# --- Encode local image to Base64 ---
-image_path = "images/Football Pitch Image.svg"  # make sure this path is correct
+# --- Encode local image to Base64 (use PNG or SVG) ---
+image_path = "images/Football Pitch Image.svg"  # adjust path if needed
 with open(image_path, "rb") as f:
     image_bytes = f.read()
     b64_image = base64.b64encode(image_bytes).decode()
 
-# --- CSS + container ---
-st.markdown(f"""
-<style>
-.pitch-container {{
-   position: relative;
-   width: 100%;
-   height: 900px;
-   background-image: url("data:image/svg+xml;base64,{b64_image}");
-   background-size: contain;
-   background-repeat: no-repeat;
-   background-position: center bottom;
-   margin: auto;
-}}
-.position-box {{
-   position: absolute;
-   transform: translate(-50%, -50%);
-   text-align: center;
-}}
-.player-btn {{
-   background-color: rgba(0,0,0,0.5);
-   color: white;
-   border: 1px solid white;
-   border-radius: 5px;
-   cursor: pointer;
-   padding: 2px 5px;
-   font-size: 0.9rem;
-   margin: 1px 0;
-}}
-.player-btn:hover {{
-   background-color: gold;
-   color: black;
-}}
-</style>
-<div class="pitch-container">
-""", unsafe_allow_html=True)
+# --- Build the full HTML (single chunk) to render in a component iframe ---
+# Adjust the CSS height here (and the components.html height below) if you want larger/smaller
+container_height_px = 900
 
-# --- Add each position with clickable links ---
+html = f"""
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <style>
+    html,body {{
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: transparent;
+    }}
+    .pitch-container {{
+      position: relative;
+      width: 100%;
+      height: {container_height_px}px;
+      background-image: url("data:image/svg+xml;base64,{b64_image}");
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center bottom;
+      overflow: hidden;
+    }}
+    .position-box {{
+      position: absolute;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: auto;
+    }}
+    /* style anchor to look like a button */
+    .player-btn {{
+      display: inline-block;
+      background-color: rgba(0,0,0,0.65);
+      color: #fff;
+      border: 1px solid #fff;
+      border-radius: 6px;
+      padding: 4px 8px;
+      margin: 2px 0;
+      text-decoration: none;
+      font-weight: 600;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }}
+    .player-btn:hover {{
+      background-color: gold;
+      color: black;
+    }}
+    .pos-label {{
+      color: white;
+      font-weight: 700;
+      margin-bottom: 4px;
+      text-shadow: 0 0 4px rgba(0,0,0,0.8);
+    }}
+  </style>
+</head>
+<body>
+  <div class="pitch-container">
+"""
+
+# Add each position and players inside it
 for pos, players_list in positions.items():
     coords = position_coords.get(pos)
-    if coords:
-        top = coords["top"]
-        left = coords["left"]
-        block = f'<div class="position-box" style="top:{top}%; left:{left}%;">'
-        block += f'<div><strong>{pos}</strong></div>'
-        for p in players_list[:3]:
-            name = p["name"]
-            block += f'''
-                <a href="?selected_player={name}" target="_self">
-                    <button class="player-btn">{name}</button>
-                </a><br>
-            '''
-        block += '</div>'
-        st.markdown(block, unsafe_allow_html=True)
+    if not coords:
+        continue
+    top = coords["top"]
+    left = coords["left"]
 
-# close container
-st.markdown("</div>", unsafe_allow_html=True)
+    # Open position box
+    html += f'<div class="position-box" style="top:{top}%; left:{left}%;">'
+    html += f'<div class="pos-label">{html_lib.escape(pos)}</div>'
 
-# --- Handle navigation ---
-if "selected_player" in st.query_params:
-    selected_player = st.query_params["selected_player"]
+    # Add up to 3 players (you can change number)
+    for p in players_list[:3]:
+        name = p["name"]
+        label = html_lib.escape(name)
+        url_name = urllib.parse.quote_plus(name)  # safe for URL param
+        # anchor sets target to parent frame so it changes the top-level Streamlit URL
+        html += f'<a class="player-btn" href="?selected_player={url_name}" target="_parent">{label}</a><br/>'
+
+    html += '</div>'
+
+# Close container and body
+html += """
+  </div>
+</body>
+</html>
+"""
+
+# --- Render the HTML iframe component ---
+components.html(html, height=container_height_px, scrolling=False)
+
+# --- After the component is shown, handle navigation in Streamlit based on query param ---
+params = st.experimental_get_query_params()
+if "selected_player" in params and params["selected_player"]:
+    # params values are lists; take first item and URL-decode
+    selected_player = urllib.parse.unquote_plus(params["selected_player"][0])
     st.session_state["selected_player"] = selected_player
+    # clear the query param so re-clicking doesn't immediately retrigger (optional)
+    # st.experimental_set_query_params()  # uncomment if you want to clear the query params here
+    # Navigate to the player info page (same as what you've used before)
+    # keep same switch_page target that you used elsewhere — adjust if needed
     st.switch_page("pages/2_Player_Information.py")
