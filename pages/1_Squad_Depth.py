@@ -51,7 +51,7 @@ for pos in positions.keys():
         positions[pos] = matches.to_dict(orient="records")
 
 # --- Encode local image to Base64 ---
-image_path = "images/Football Pitch Image.png"  # use PNG or SVG
+image_path = "images/Football Pitch Image.svg"  # use PNG or SVG
 with open(image_path, "rb") as f:
     image_bytes = f.read()
     b64_image = base64.b64encode(image_bytes).decode()
