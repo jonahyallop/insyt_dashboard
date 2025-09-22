@@ -56,7 +56,7 @@ html = """
     position: relative;
     width: 100%;
     height: 600px;
-    background-image: url('images/Football Pitch Image.svg');
+    background-image: url('/Users/jonahyallop/Documents/04. Code Repositories/insyt_dashboard/images/Football Pitch Image.svg');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center center;
