@@ -61,11 +61,11 @@ html = f"""
 .pitch-container {{
     position: relative;
     width: 100%;
-    height: 900px;  /* taller container */
-    background-image: url("data:image/svg+xml;base64,{b64_image}");
+    aspect-ratio: 2/1;  /* maintain width:height ratio */
+    background-image: url("data:image/png;base64,{b64_image}");
     background-size: contain;
     background-repeat: no-repeat;
-    background-position: center bottom; /* goal at bottom */
+    background-position: center bottom;
     margin: auto;
 }}
 .position-box {{
