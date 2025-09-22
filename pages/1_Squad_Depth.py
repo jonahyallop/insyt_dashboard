@@ -155,8 +155,6 @@ html += """
 components.html(html, height=container_height_px, scrolling=False)
 
 # --- After the component is shown, handle navigation in Streamlit based on query param ---
-params = st.experimental_get_query_params()
-# --- After the component is shown, handle navigation in Streamlit based on query param ---
 if "selected_player" in st.query_params:
     selected_player = st.query_params["selected_player"]
     st.session_state["selected_player"] = selected_player
