@@ -27,7 +27,7 @@ st.markdown(
     """
     <style>
     .pitch {
-        background-image: url("https://upload.wikimedia.org/wikipedia/commons/6/60/Soccer_field_-_empty.svg");
+        background-image: url("https://upload.wikimedia.org/wikipedia/commons/4/45/Football_field.svg");
         background-size: contain;
         background-repeat: no-repeat; 
         background-position: center center;
