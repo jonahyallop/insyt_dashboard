@@ -26,63 +26,41 @@ st.subheader("Formation (4-2-3-1)")
 st.markdown(
     """
     <style>
-    /* Put the pitch image behind the Streamlit block container so UI sits on top */
-    div.block-container {
+    .pitch {
         background-image: url("https://upload.wikimedia.org/wikipedia/commons/6/60/Soccer_field_-_empty.svg");
-        background-repeat: no-repeat;
-        /* adjust the size & position to taste */
-        background-position: center 15%;
-        background-size: 90% 70%;
-        padding-top: 24px;       /* space above the pitch */
-        padding-bottom: 40px;    /* space below so goalkeeper row isn't cramped */
+        background-size: contain;
+        background-repeat: no-repeat; 
+        background-position: center center;
+        background-color: #228B22; /* fallback green */
+        border: 3px solid white;
+        border-radius: 8px;
+        padding: 40px;
+        margin: auto;
+        min-height: 600px;
     }
-
-    /* Optional: visual frame around the pitch area (transparent so background shows) */
-    .pitch-frame {
-        border: 3px solid #ffffffcc;
-        border-radius: 10px;
-        padding: 18px;
-        margin: 12px auto 24px auto;
-        background: rgba(0,0,0,0); /* transparent to let pitch show through */
-        width: 95%;
-    }
-
-    /* Player / position styling (kept from your original) */
     .position-box {
         border: 2px solid white;
         border-radius: 6px;
         padding: 6px;
-        margin: 6px 4px;
-        background-color: rgba(0,0,0,0.45);
+        margin: 4px;
+        background-color: rgba(255,255,255,0.1);
         text-align: center;
         color: white;
         font-weight: bold;
     }
     .player-slot {
-        margin: 6px 0;
+        margin: 4px 0;
     }
-    /* style the Streamlit buttons a bit: target Streamlit button inner text */
-    .stButton>button {
-        background: rgba(0,0,0,0.6) !important;
-        border-radius: 8px;
-        padding: 8px 12px;
+    .player-btn {
+        background: none;
+        border: none;
         color: #fff;
-        border: 1px solid rgba(255,255,255,0.08) !important;
+        text-decoration: underline;
+        cursor: pointer;
+        font-size: 0.9rem;
     }
-    .stButton>button:hover {
-        color: #FFD700;
-        border-color: rgba(255,255,255,0.25) !important;
-    }
-
-    /* make sure buttons are visually compact */
-    .stButton>button>div {
-        padding-top: 4px;
-        padding-bottom: 4px;
-    }
-
-    /* small responsive tweak */
-    @media (max-width: 900px) {
-        div.block-container { background-size: 100% 60%; }
+    .player-btn:hover {
+        color: #FFD700; /* gold highlight */
     }
     </style>
     """,
