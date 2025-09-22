@@ -18,19 +18,19 @@ group_players = players[players["age_group"] == group]
 
 st.subheader("Formation (4-2-3-1)")
 
-# --- Map positions to coordinates (percentages) ---
+# --- Map positions to coordinates (percentages) for taller half-pitch ---
 position_coords = {
-    "GK": {"top": 92, "left": 50},
-    "LB": {"top": 70, "left": 12},
-    "LCB": {"top": 70, "left": 35},
-    "RCB": {"top": 70, "left": 65},
-    "RB": {"top": 70, "left": 88},
-    "LDM": {"top": 50, "left": 42},
-    "RDM": {"top": 50, "left": 58},
-    "LW": {"top": 30, "left": 18},
-    "CAM": {"top": 30, "left": 50},
-    "RW": {"top": 30, "left": 82},
-    "ST": {"top": 10, "left": 50},
+    "GK": {"top": 95, "left": 50},
+    "LB": {"top": 75, "left": 12},
+    "LCB": {"top": 75, "left": 35},
+    "RCB": {"top": 75, "left": 65},
+    "RB": {"top": 75, "left": 88},
+    "LDM": {"top": 55, "left": 42},
+    "RDM": {"top": 55, "left": 58},
+    "LW": {"top": 35, "left": 18},
+    "CAM": {"top": 35, "left": 50},
+    "RW": {"top": 35, "left": 82},
+    "ST": {"top": 15, "left": 50},
 }
 
 # --- Build positions dict ---
@@ -50,7 +50,7 @@ for pos in positions.keys():
         positions[pos] = matches.to_dict(orient="records")
 
 # --- Encode local image to Base64 ---
-image_path = "images/Football Pitch Image.svg"  # relative path in your project
+image_path = "images/Football Pitch Image.svg"  # make sure this path is correct
 with open(image_path, "rb") as f:
     image_bytes = f.read()
     b64_image = base64.b64encode(image_bytes).decode()
@@ -60,8 +60,8 @@ html = f"""
 <style>
 .pitch-container {{
     position: relative;
-    width: 90%;
-    height: 700px;
+    width: 100%;
+    height: 900px;  /* taller container */
     background-image: url("data:image/svg+xml;base64,{b64_image}");
     background-size: contain;
     background-repeat: no-repeat;
