@@ -156,12 +156,13 @@ components.html(html, height=container_height_px, scrolling=False)
 
 # --- After the component is shown, handle navigation in Streamlit based on query param ---
 params = st.experimental_get_query_params()
-if "selected_player" in params and params["selected_player"]:
-    # params values are lists; take first item and URL-decode
-    selected_player = urllib.parse.unquote_plus(params["selected_player"][0])
+# --- After the component is shown, handle navigation in Streamlit based on query param ---
+if "selected_player" in st.query_params:
+    selected_player = st.query_params["selected_player"]
     st.session_state["selected_player"] = selected_player
-    # clear the query param so re-clicking doesn't immediately retrigger (optional)
-    # st.experimental_set_query_params()  # uncomment if you want to clear the query params here
-    # Navigate to the player info page (same as what you've used before)
-    # keep same switch_page target that you used elsewhere — adjust if needed
+
+    # (Optional) clear query param so page reloads cleanly after redirect
+    st.query_params.clear()
+
+    # Navigate to the player info page
     st.switch_page("pages/2_Player_Information.py")
