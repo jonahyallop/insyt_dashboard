@@ -27,12 +27,60 @@ st.markdown(
     """
     <style>
     .pitch {
+        position: relative;
         background: #228B22;
         border: 3px solid white;
         border-radius: 8px;
-        padding: 30px;
+        padding: 40px;
         margin: auto;
+        width: 90%;
+        height: 600px; /* set height for half pitch */
     }
+
+    /* Halfway line */
+    .pitch::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 5%;
+        width: 90%;
+        height: 0;
+        border-top: 2px solid white;
+    }
+
+    /* Penalty box */
+    .penalty-box {
+        position: absolute;
+        bottom: 0;
+        left: 25%;
+        width: 50%;
+        height: 20%;
+        border: 2px solid white;
+    }
+
+    /* Goal box */
+    .goal-box {
+        position: absolute;
+        bottom: 0;
+        left: 40%;
+        width: 20%;
+        height: 10%;
+        border: 2px solid white;
+    }
+
+    /* Centre circle */
+    .centre-circle {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 15%;
+        height: 15%;
+        border: 2px solid white;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    /* Your existing styles */
     .position-box {
         border: 2px solid white;
         border-radius: 6px;
@@ -61,6 +109,7 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
 
 # --- Build position map ---
 position_order = [
@@ -94,6 +143,9 @@ def position_box(pos_label, players):
 
 # --- Formation Layout (rows) ---
 st.markdown('<div class="pitch">', unsafe_allow_html=True)
+st.markdown('<div class="penalty-box"></div>', unsafe_allow_html=True)
+st.markdown('<div class="goal-box"></div>', unsafe_allow_html=True)
+st.markdown('<div class="centre-circle"></div>', unsafe_allow_html=True)
 
 # Striker
 cols = st.columns([3,1,3])
