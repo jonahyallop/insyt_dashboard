@@ -61,7 +61,7 @@ html = f"""
 .pitch-container {{
     position: relative;
     width: 100%;
-    aspect-ratio: 2/1;  /* maintain width:height ratio */
+    padding-top: 50%; /* height = 50% of width -> 2:1 ratio */
     background-image: url("data:image/png;base64,{b64_image}");
     background-size: contain;
     background-repeat: no-repeat;
