@@ -1,13 +1,11 @@
-# formation_page.py  (replace your existing file content with this)
+# formation_page.py
 import streamlit as st
 import pandas as pd
 import base64
 import yaml
 from yaml import SafeLoader
-import urllib.parse
 import html as html_lib
 import streamlit.components.v1 as components
-import os
 
 # --- Load configuration ---
 with open("config/config.yaml") as file:
@@ -23,7 +21,7 @@ group_players = players[players["age_group"] == group]
 
 st.subheader("Formation (4-2-3-1)")
 
-# --- Clean map positions to coordinates (unique & sensible values) ---
+# --- Map positions to coordinates ---
 position_coords = {
     "GK":  {"top": 95, "left": 50},
     "LB":  {"top": 75, "left": 20},
@@ -38,7 +36,7 @@ position_coords = {
     "ST":  {"top": 15, "left": 50},
 }
 
-# --- Build positions dict in the order we want to show them ---
+# --- Order of positions ---
 position_order = [
     ["ST"],
     ["LW", "CAM", "RW"],
@@ -46,20 +44,20 @@ position_order = [
     ["LB", "LCB", "RCB", "RB"],
     ["GK"]
 ]
+
 positions = {pos: [] for row in position_order for pos in row}
 for pos in positions.keys():
     matches = group_players[group_players["position"] == pos]
     if not matches.empty:
         positions[pos] = matches.to_dict(orient="records")
 
-# --- Encode local image to Base64 (use PNG or SVG) ---
-image_path = "images/Football Pitch Image.svg"  # adjust path if needed
+# --- Load pitch image ---
+image_path = "images/Football Pitch Image.svg"
 with open(image_path, "rb") as f:
     image_bytes = f.read()
     b64_image = base64.b64encode(image_bytes).decode()
 
-# --- Build the full HTML (single chunk) to render in a component iframe ---
-# Adjust the CSS height here (and the components.html height below) if you want larger/smaller
+# --- Build HTML ---
 container_height_px = 900
 
 html = f"""
@@ -89,32 +87,23 @@ html = f"""
       position: absolute;
       transform: translate(-50%, -50%);
       text-align: center;
-      pointer-events: auto;
-    }}
-    /* style anchor to look like a button */
-    .player-btn {{
-      display: inline-block;
-      background-color: rgba(0,0,0,0.65);
-      color: #fff;
-      border: 1px solid #fff;
+      background-color: white;
+      border: 2px solid black;
       border-radius: 6px;
-      padding: 4px 8px;
-      margin: 2px 0;
-      text-decoration: none;
-      font-weight: 600;
+      padding: 6px;
+      min-width: 100px;
+      max-width: 150px;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      font-size: 0.9rem;
-      cursor: pointer;
-    }}
-    .player-btn:hover {{
-      background-color: gold;
-      color: black;
+      font-size: 0.85rem;
     }}
     .pos-label {{
-      color: white;
       font-weight: 700;
       margin-bottom: 4px;
-      text-shadow: 0 0 4px rgba(0,0,0,0.8);
+      display: block;
+    }}
+    .player-entry {{
+      margin: 2px 0;
+      font-size: 0.8rem;
     }}
   </style>
 </head>
@@ -122,7 +111,7 @@ html = f"""
   <div class="pitch-container">
 """
 
-# Add each position and players inside it
+# Add each position box with up to 3 players
 for pos, players_list in positions.items():
     coords = position_coords.get(pos)
     if not coords:
@@ -130,37 +119,21 @@ for pos, players_list in positions.items():
     top = coords["top"]
     left = coords["left"]
 
-    # Open position box
     html += f'<div class="position-box" style="top:{top}%; left:{left}%;">'
-    html += f'<div class="pos-label">{html_lib.escape(pos)}</div>'
+    html += f'<span class="pos-label">{html_lib.escape(pos)}</span>'
 
-    # Add up to 3 players (you can change number)
     for p in players_list[:3]:
-        name = p["name"]
-        label = html_lib.escape(name)
-        url_name = urllib.parse.quote_plus(name)  # safe for URL param
-        # anchor sets target to parent frame so it changes the top-level Streamlit URL
-        html += f'<a class="player-btn" href="?selected_player={url_name}" target="_parent">{label}</a><br/>'
+        name = html_lib.escape(p["name"])
+        age = p.get("age", "")
+        html += f'<div class="player-entry">{name} ({age})</div>'
 
     html += '</div>'
 
-# Close container and body
 html += """
   </div>
 </body>
 </html>
 """
 
-# --- Render the HTML iframe component ---
+# --- Render ---
 components.html(html, height=container_height_px, scrolling=False)
-
-# --- After the component is shown, handle navigation in Streamlit based on query param ---
-if "selected_player" in st.query_params:
-    selected_player = st.query_params["selected_player"]
-    st.session_state["selected_player"] = selected_player
-
-    # (Optional) clear query param so page reloads cleanly after redirect
-    st.query_params.clear()
-
-    # Navigate to the player info page
-    st.switch_page("pages/2_Player_Information.py")
