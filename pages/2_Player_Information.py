@@ -33,7 +33,7 @@ players = pd.read_csv(f"data/players_{club}.csv")
 assessments = pd.read_csv(f"data/assessments_{club}.csv")
 
 # Adding a page header
-st.subheader("Player sashboard: select squad and player")
+st.subheader("Player dashboard: select squad and player")
 
 # --- Dropdowns for age group and player ---
 age_groups = sorted(players["age_group"].unique())
