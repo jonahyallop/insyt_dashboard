@@ -12,12 +12,18 @@ with open("config/config.yaml") as file:
     config = yaml.load(file, Loader=SafeLoader)
 
 club = st.session_state.get("club")
-group = st.session_state.get("selected_group")
+
+# --- Load player data for the club ---
+players = pd.read_csv(f"data/players_{club}.csv")
+
+# --- Dropdown for age group selection ---
+age_groups = sorted(players["age_group"].astype(str).str.strip().unique())
+group = st.selectbox("Select an Age Group", age_groups)
 
 st.title(f"{group} Squad Depth")
 
-players = pd.read_csv(f"data/players_{club}.csv")
-group_players = players[players["age_group"] == group]
+# --- Filter players to selected age group ---
+group_players = players[players["age_group"].astype(str).str.strip() == group]
 
 st.subheader("Formation (4-2-3-1)")
 
@@ -45,6 +51,7 @@ position_order = [
     ["GK"]
 ]
 
+# --- Assign players to positions ---
 positions = {pos: [] for row in position_order for pos in row}
 for pos in positions.keys():
     matches = group_players[group_players["position"] == pos]
