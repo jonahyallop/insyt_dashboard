@@ -110,6 +110,7 @@ html = f"""
       padding: 2px 4px;
       text-align: center;
       font-size: 0.7rem;
+      white-space: nowrap;
     }}
     th {{
       background-color: #f0f0f0;
