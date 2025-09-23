@@ -25,16 +25,19 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- Load available clubs from data folder ---
-data_dir = "data"
-clubs = sorted({f.split("_")[1].replace(".csv", "") for f in os.listdir(data_dir) if f.startswith("players_")})
 
-club = st.selectbox("Select a Club", clubs)
+club = st.session_state.get("club")
 
 # --- Load players for chosen club ---
-players = pd.read_csv(f"{data_dir}/players_{club}.csv")
-assessments = pd.read_csv(f"{data_dir}/assessments_{club}.csv")
+players = pd.read_csv(f"data/players_{club}.csv")
+assessments = pd.read_csv(f"data/assessments_{club}.csv")
 
+# Adding a page header
+st.title("Filter for squad and player.")
+
+# --- Dropdowns for age group and player ---
+age_groups = sorted(players["age_group"].unique())
+age_group = st.selectbox("Select an Age Group", age_groups)
 player = st.selectbox("Select a Player", players["name"].tolist())
 
 # --- Once both selected, show dashboard ---
@@ -45,7 +48,7 @@ if player:
     group = pinfo["age_group"]
 
     # --- Page title: Player name ---
-    st.title(player)
+    st.subheader(player)
 
     # --- Player Info Row (3 columns) ---
     col1, col2, col3 = st.columns(3)
