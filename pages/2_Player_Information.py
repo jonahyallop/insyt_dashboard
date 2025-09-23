@@ -38,7 +38,12 @@ st.title("Filter for squad and player.")
 # --- Dropdowns for age group and player ---
 age_groups = sorted(players["age_group"].unique())
 age_group = st.selectbox("Select an Age Group", age_groups)
-player = st.selectbox("Select a Player", players["name"].tolist())
+
+# Only players in the chosen age group
+group_players_df = players[players["age_group"] == age_group]
+group_players = group_players_df["name"].tolist()
+
+player = st.selectbox("Select a Player", group_players)
 
 # --- Once both selected, show dashboard ---
 if player:
