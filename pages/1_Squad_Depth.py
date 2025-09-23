@@ -16,16 +16,14 @@ club = st.session_state.get("club")
 # --- Load player data for the club ---
 players = pd.read_csv(f"data/players_{club}.csv")
 
+st.title("Squad Depth")
+
 # --- Dropdown for age group selection ---
 age_groups = sorted(players["age_group"].astype(str).str.strip().unique())
 group = st.selectbox("Select an Age Group", age_groups)
 
-st.title(f"{group} Squad Depth")
-
 # --- Filter players to selected age group ---
 group_players = players[players["age_group"].astype(str).str.strip() == group]
-
-st.subheader("Formation (4-2-3-1)")
 
 # --- Map positions to coordinates ---
 position_coords = {
