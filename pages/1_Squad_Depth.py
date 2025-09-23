@@ -24,15 +24,15 @@ st.subheader("Formation (4-2-3-1)")
 # --- Map positions to coordinates ---
 position_coords = {
     "GK":  {"top": 95, "left": 50},
-    "LB":  {"top": 75, "left": 20},
-    "LCB": {"top": 75, "left": 35},
-    "RCB": {"top": 75, "left": 65},
-    "RB":  {"top": 75, "left": 80},
+    "LB":  {"top": 65, "left": 20},
+    "LCB": {"top": 75, "left": 40},
+    "RCB": {"top": 75, "left": 60},
+    "RB":  {"top": 65, "left": 70},
     "LDM": {"top": 55, "left": 42},
     "RDM": {"top": 55, "left": 58},
-    "LW":  {"top": 35, "left": 25},
+    "LW":  {"top": 35, "left": 30},
     "CAM": {"top": 35, "left": 50},
-    "RW":  {"top": 35, "left": 75},
+    "RW":  {"top": 35, "left": 70},
     "ST":  {"top": 15, "left": 50},
 }
 
