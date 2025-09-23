@@ -96,7 +96,7 @@ html = f"""
       border-radius: 6px;
       padding: 4px;
       min-width: 180px;
-      max-width: 220px;
+      width: auto;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
       font-size: 0.75rem;
       overflow-x: auto;
