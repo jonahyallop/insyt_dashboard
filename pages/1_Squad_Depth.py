@@ -86,24 +86,29 @@ html = f"""
     .position-box {{
       position: absolute;
       transform: translate(-50%, -50%);
-      text-align: center;
       background-color: white;
       border: 2px solid black;
       border-radius: 6px;
-      padding: 6px;
-      min-width: 100px;
-      max-width: 150px;
+      padding: 4px;
+      min-width: 180px;
+      max-width: 220px;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      font-size: 0.85rem;
+      font-size: 0.75rem;
+      overflow-x: auto;
     }}
-    .pos-label {{
+    table {{
+      border-collapse: collapse;
+      width: 100%;
+    }}
+    th, td {{
+      border: 1px solid black;
+      padding: 2px 4px;
+      text-align: center;
+      font-size: 0.7rem;
+    }}
+    th {{
+      background-color: #f0f0f0;
       font-weight: 700;
-      margin-bottom: 4px;
-      display: block;
-    }}
-    .player-entry {{
-      margin: 2px 0;
-      font-size: 0.8rem;
     }}
   </style>
 </head>
@@ -111,7 +116,7 @@ html = f"""
   <div class="pitch-container">
 """
 
-# Add each position box with up to 3 players
+# Add each position table
 for pos, players_list in positions.items():
     coords = position_coords.get(pos)
     if not coords:
@@ -120,14 +125,34 @@ for pos, players_list in positions.items():
     left = coords["left"]
 
     html += f'<div class="position-box" style="top:{top}%; left:{left}%;">'
-    html += f'<span class="pos-label">{html_lib.escape(pos)}</span>'
 
+    # Table header
+    html += """
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Bio. Age</th>
+        <th>Status</th>
+      </tr>
+    """
+
+    # Up to 3 players
     for p in players_list[:3]:
-        name = html_lib.escape(p["name"])
+        name = html_lib.escape(p.get("name", ""))
         age = p.get("age", "")
-        html += f'<div class="player-entry">{name} ({age})</div>'
+        bio_age = p.get("bio_age", "")
+        status = html_lib.escape(p.get("maturation_status", ""))
+        html += f"""
+          <tr>
+            <td>{name}</td>
+            <td>{age}</td>
+            <td>{bio_age}</td>
+            <td>{status}</td>
+          </tr>
+        """
 
-    html += '</div>'
+    html += "</table></div>"
 
 html += """
   </div>
